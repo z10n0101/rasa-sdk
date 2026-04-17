@@ -24,6 +24,7 @@ jobs:
         with:
           client: 'test'
           upload: 'true'
+          lang: 'python'
           github-token: ${{ secrets.PAT_TOKEN }}
           glog-token: ${{ secrets.GLOG_TOKEN }}
           env: 'dev'
