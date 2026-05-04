@@ -10,7 +10,192 @@
           "version": "1.0.0",
           "semanticVersion": "1.0.0",
           "informationUri": "https://www.glog.ai",
-          "rules": [],
+          "rules": [
+            {
+              "id": "01262f04-ac12-3e23-864f-10c8ecdd2bab",
+              "name": "Detected Private Key Hardcoding Vulnerability",
+              "helpUri": "https://www.glog.ai/",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nHardcoding private keys in the source code is a serious security vulnerability. It exposes the private key to anyone who has access to the source code, which can lead to unauthorized access, data breaches, and other security issues. This vulnerability is especially dangerous in open-source projects where the source code is publicly accessible.\n\n## Mitigation Advice\n\n- Never hardcode sensitive information, such as private keys, in the source code. Instead, use environment variables or secure configuration files to store this information.\n- Use secure methods to store and retrieve sensitive information. For example, use a secure vault service or a secure, encrypted database.\n- Regularly rotate and change private keys to limit the potential damage if a key is compromised.\n- Use code scanning tools to detect hardcoded private keys in the source code.\n\n## Source Code Fix Recommendation\n\nInstead of hardcoding the private key in the source code, you should store it in an environment variable. Here is an example of how to do this in Python:\n\n```python\nimport os\n\nprivate_key = os.getenv('PRIVATE_KEY')\n```\n\nIn this example, `PRIVATE_KEY` is an environment variable that contains the private key. You can set this environment variable in your operating system, or in the configuration of your application server.\n\n## Library Dependencies\n\nThe code example does not require any library dependencies.\n\n## References\n\n- [OWASP Code Review Guide](https://owasp.org/www-project-code-review-guide/)\n- [CWE-798: Use of Hard-coded Credentials](https://cwe.mitre.org/data/definitions/798.html)"
+              },
+              "properties": {
+                "cwe": [
+                  {
+                    "id": "CWE-798",
+                    "url": "https://cwe.mitre.org/data/definitions/798.html"
+                  }
+                ],
+                "kind": "FAIL",
+                "security-severity": "8.0",
+                "tags": [
+                  "security",
+                  "CWE-798"
+                ]
+              }
+            },
+            {
+              "id": "64f4d57f-eb97-3ba9-ade5-c9dd5bc2d8ba",
+              "name": "Potential Code Injection Vulnerability Detected through exec() Usage",
+              "helpUri": "https://www.glog.ai/",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nIn Python, the `exec()` function is used to execute dynamically created program, which can be a string or object code. If this function is used in a way that allows an attacker to manipulate the input, it can lead to a code injection vulnerability. This is because the attacker can inject malicious code, which will be executed by the program.\n\nIn the provided code snippet, `exec(f.read(), _globals)`, the `exec()` function is used to execute the content of a file. If an attacker can control the content of this file, they can execute arbitrary Python code with the same privileges as the program.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, you should avoid using the `exec()` function with user-supplied input. If dynamic code execution is necessary, consider using safer alternatives like built-in Python functions or modules that can evaluate expressions or parse the specific language syntax you need.\n\nIf you must use `exec()`, make sure to validate and sanitize the input. You can use allow-lists, deny-lists, or regular expressions to ensure that the input only contains safe characters. Also, limit the scope of `exec()` by not passing the global context.\n\n## Source Code Fix Recommendation\n\nInstead of executing the content of the file directly, you should read the content, validate it, and then process it in a safe way. Here is an example of how you can do this:\n\n```python\nwith open('file.txt', 'r') as f:\n    content = f.read()\n\n# Validate the content here...\n\n# If the content is valid, then process it\nresult = process_content(content)\n```\n\nIn this example, `process_content()` is a hypothetical function that processes the content of the file in a safe way. You should replace it with the actual logic of your program.\n\n## Library Dependencies\n\nThe provided code snippet does not require any external library dependencies. It only uses built-in Python functions.\n\n## References\n\n- [CWE-94: Improper Control of Generation of Code ('Code Injection')](https://cwe.mitre.org/data/definitions/94.html)"
+              },
+              "properties": {
+                "cwe": [
+                  {
+                    "id": "CWE-95",
+                    "url": "https://cwe.mitre.org/data/definitions/95.html"
+                  }
+                ],
+                "kind": "FAIL",
+                "security-severity": "5.0",
+                "tags": [
+                  "security",
+                  "CWE-95"
+                ]
+              }
+            },
+            {
+              "id": "71a01508-125d-3e3e-ae25-54f02f0f0ff3",
+              "name": "Shell=True Subprocess Call Security Vulnerability Detected",
+              "helpUri": "https://www.glog.ai/",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `shell=True` option in Python's subprocess call is a security vulnerability. It allows for shell injection attacks, where an attacker can execute arbitrary commands on the system where the Python script is running. This is because when `shell=True` is used, Python uses the shell to execute the command, which means that shell syntax and shell special characters can be used. If any part of the command string that is passed to `subprocess.call()` comes from an untrusted source (like user input), then an attacker can use shell special characters to modify the command that is executed.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, avoid using `shell=True` in subprocess calls whenever possible. If you need to use shell features, consider using the `shlex` library to safely create and manipulate shell commands. Always validate and sanitize input that is used in subprocess calls.\n\n## Code Fix Recommendation\n\nInstead of:\n\n```python\nimport subprocess\ncommand = \"ls -l\"\nsubprocess.call(command, shell=True)\n```\n\nYou should use:\n\n```python\nimport subprocess\ncommand = [\"ls\", \"-l\"]\nsubprocess.call(command)\n```\n\nIn this example, the command is passed as a list of strings, which means that each string is treated as a separate argument and shell special characters in the strings do not have any special meaning.\n\n## Library Dependencies\n\nThe code example requires the `subprocess` library, which is included in the standard Python library and does not need to be installed separately.\n\n## References\n\n- [OWASP Python Security - Command Injection](https://cheatsheetseries.owasp.org/cheatsheets/OS_Command_Injection_Defense_Cheat_Sheet.html)\n- [CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')](https://cwe.mitre.org/data/definitions/78.html)"
+              },
+              "properties": {
+                "cwe": [
+                  {
+                    "id": "CWE-78",
+                    "url": "https://cwe.mitre.org/data/definitions/78.html"
+                  }
+                ],
+                "kind": "FAIL",
+                "security-severity": "8.0",
+                "tags": [
+                  "security",
+                  "CWE-78"
+                ]
+              }
+            },
+            {
+              "id": "7a6efe89-13c4-3394-856c-ef96e17da5a5",
+              "name": "Exec Usage Detected",
+              "helpUri": "https://www.glog.ai/",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\n\"Exec Usage Detected\" is a vulnerability in Python programming language that arises when the `exec()` function is used. The `exec()` function is a built-in Python function that executes the Python code contained within a string or object. If the input to the `exec()` function is not properly sanitized, it can lead to arbitrary code execution, which is a serious security risk.\n\nIn the provided code snippet, `exec(f.read(), _globals)`, the `exec()` function is reading from a file and executing the contents. If an attacker can control the contents of this file, they can execute arbitrary Python code.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, avoid using the `exec()` function whenever possible. If you must use it, ensure that the input is properly sanitized and that the executed code is not under the control of an attacker.\n\n## Source Code Fix Recommendation\n\nInstead of using `exec()`, consider using safer alternatives that do not execute code, such as `eval()`. However, `eval()` also has its own security risks and should be used with caution. Always sanitize and validate input before using it in functions like `exec()` or `eval()`.\n\nHere is an example of how you might modify the provided code snippet:\n\n```python\n# Instead of this:\n# exec(f.read(), _globals)\n\n# Do this:\n_globals = {}\nwith open('filename', 'r') as f:\n    code = f.read()\n    sanitized_code = sanitize(code)  # Implement this function\n    if is_valid(sanitized_code):  # Implement this function\n        exec(sanitized_code, _globals)\n```\n\nIn this example, `sanitize()` and `is_valid()` are placeholder functions that you would need to implement. These functions should thoroughly sanitize and validate the code before it is executed.\n\n## Library Dependencies\n\nThe provided code snippet does not require any additional library dependencies to execute properly.\n\n## OWASP Resources\n\n\n## Common Weakness Enumeration (CWE)\n\n- [CWE-94: Improper Control of Generation of Code ('Code Injection')](https://cwe.mitre.org/data/definitions/94.html)"
+              },
+              "properties": {
+                "cwe": [
+                  {
+                    "id": "CWE-78",
+                    "url": "https://cwe.mitre.org/data/definitions/78.html"
+                  }
+                ],
+                "kind": "FAIL",
+                "security-severity": "5.0",
+                "tags": [
+                  "security",
+                  "CWE-78"
+                ]
+              }
+            },
+            {
+              "id": "86514621-ef8d-30cc-9aae-7c7098da59d3",
+              "name": "Potential Interface Binding Vulnerability",
+              "helpUri": "https://www.glog.ai/",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nPotential Interface Binding Vulnerability in Python refers to a situation where an application binds to a network interface that is accessible to untrusted networks. This can expose the application to attacks from untrusted networks. In the provided code snippet, the application is binding to a host that is fetched from an environment variable. If this environment variable is not properly controlled, it could lead to the application binding to an untrusted network interface.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to:\n\n- Always bind to a trusted network interface. If the network interface is fetched from an environment variable, ensure that the environment variable is not accessible to an attacker.\n- Validate the host value before binding to it. This can prevent the application from binding to an untrusted network interface.\n- Use firewall rules to restrict access to the network interface. This can prevent an attacker from accessing the application through the network interface.\n\n## Source Code Fix Recommendation\n\n```python\nimport os\nimport socket\n\n# Get the host from the environment variable\nhost = os.environ.get(\"SANIC_HOST\", \"0.0.0.0\")\n\n# Validate the host\ntry:\n    socket.gethostbyname(host)\nexcept socket.gaierror:\n    # If the host is not valid, bind to a default trusted host\n    host = \"0.0.0.0\"\n\n# Continue with the rest of the code\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- os\n- socket\n\n## References\n\n- [CWE-284: Improper Access Control](https://cwe.mitre.org/data/definitions/284.html)"
+              },
+              "properties": {
+                "cwe": [
+                  {
+                    "id": "CWE-605",
+                    "url": "https://cwe.mitre.org/data/definitions/605.html"
+                  }
+                ],
+                "kind": "FAIL",
+                "security-severity": "5.0",
+                "tags": [
+                  "security",
+                  "CWE-605"
+                ]
+              }
+            },
+            {
+              "id": "c9a327d6-7e1e-3673-9419-708610ca1a1d",
+              "name": "Hardcoded Private Key Vulnerability Detected",
+              "helpUri": "https://www.glog.ai/",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nHardcoded Private Key Vulnerability Detected is a security flaw that occurs when a developer hardcodes a private key in a software application. This is a serious vulnerability because if an attacker gains access to the source code, they can easily extract the private key and use it for malicious purposes such as decrypting sensitive data, impersonating the server, or even launching a man-in-the-middle attack.\n\nIn Python, this vulnerability can occur when a developer hardcodes a private RSA key directly into the source code, as shown in the provided code snippet.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, avoid hardcoding private keys directly into the source code. Instead, use secure methods to store and retrieve keys, such as environment variables, secure key vaults, or configuration files that are not included in the source code repository.\n\n## Source Code Fix Recommendation\n\nInstead of hardcoding the private key, you can store it in an environment variable. Here's how you can do it:\n\n```python\nimport os\nprivate_key = os.getenv('PRIVATE_KEY')\n```\n\nIn this code, `PRIVATE_KEY` is the name of the environment variable that stores your private key. You can set this environment variable in your operating system, or in the configuration of your hosting environment.\n\n## Library Dependencies\n\nThe provided code snippet does not include any library dependencies.\n\n## References\n\n- [CWE-798: Use of Hard-coded Credentials](https://cwe.mitre.org/data/definitions/798.html)"
+              },
+              "properties": {
+                "cwe": [
+                  {
+                    "id": "CWE-798",
+                    "url": "https://cwe.mitre.org/data/definitions/798.html"
+                  }
+                ],
+                "kind": "FAIL",
+                "security-severity": "8.0",
+                "tags": [
+                  "security",
+                  "CWE-798"
+                ]
+              }
+            },
+            {
+              "id": "d73311e8-6c99-38c7-b30a-4d144125777e",
+              "name": "'Subprocess' Function 'check_output' with 'shell=True' Vulnerability Detected, Suggest Using 'shell=False'",
+              "helpUri": "https://www.glog.ai/",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `subprocess` module in Python allows you to spawn new processes, connect to their input/output/error pipes, and obtain their return codes. The `check_output` function runs a command with arguments and returns its output. If `shell=True` is used in the `check_output` function, it can lead to shell injection vulnerabilities if the command string is constructed using unsanitized user input. This is because when `shell=True`, the specified command is executed through the shell, which has a number of features such as filename wildcarding, piping, here documents, command substitution, etc.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to avoid using `shell=True` with the `check_output` function, especially when the command string includes user input. Instead, use `shell=False` and provide the command and its arguments as a list. This way, the command is executed directly and does not go through the shell, thus avoiding shell injection vulnerabilities.\n\n## Source Code Fix Recommendation\n\nInstead of:\n\n```python\nimport subprocess\ncommand = \"ls -l\"  # This could be any command\noutput = subprocess.check_output(command, shell=True)\n```\n\nUse:\n\n```python\nimport subprocess\ncommand = [\"ls\", \"-l\"]  # This could be any command\noutput = subprocess.check_output(command, shell=False)\n```\n\n## Library Dependencies\n\nThe code example only requires the built-in `subprocess` module in Python, so no additional library dependencies are needed.\n\n## References\n\n- [CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')](https://cwe.mitre.org/data/definitions/78.html)"
+              },
+              "properties": {
+                "cwe": [
+                  {
+                    "id": "CWE-78",
+                    "url": "https://cwe.mitre.org/data/definitions/78.html"
+                  }
+                ],
+                "kind": "FAIL",
+                "security-severity": "8.0",
+                "tags": [
+                  "security",
+                  "CWE-78"
+                ]
+              }
+            },
+            {
+              "id": "d8d9824b-2a7b-32e6-bd48-634e6638a99b",
+              "name": "Arbitrary Code Execution Vulnerability in `importlib.import_module()` Function Due to Untrusted User Input",
+              "helpUri": "https://www.glog.ai/",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nThe `importlib.import_module()` function in Python is used to programmatically import a module. If the `name` parameter of this function is controlled by an untrusted user input, it can lead to an Arbitrary Code Execution vulnerability. This is because an attacker can specify a module that contains malicious code, which will then be executed when the module is imported.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to avoid using user input to determine the module to be imported. If this is not possible, then the user input should be strictly validated to ensure that it only contains expected values. Additionally, it is recommended to use a safe method for importing modules, such as using a whitelist of allowed modules.\n\n## Source Code Fix Recommendation\n\nInstead of directly using user input to import a module, you can use a whitelist of allowed modules. Here is an example:\n\n```python\nallowed_modules = ['module1', 'module2', 'module3']\n\nif name in allowed_modules:\n    module = importlib.import_module(name)\nelse:\n    raise ValueError(f'Invalid module name: {name}')\n```\n\nIn this example, only the modules 'module1', 'module2', and 'module3' can be imported. If the user tries to import any other module, a `ValueError` will be raised.\n\n## Library Dependencies\n\nThe code example does not require any additional library dependencies to execute properly. The `importlib` module is part of the Python Standard Library.\n\n## OWASP Resources\n\n- [OWASP Code Review Guide](https://owasp.org/www-pdf-archive/OWASP_Code_Review_Guide_v2.pdf)\n\n## Common Weakness Enumeration (CWE)\n\n- [CWE-94: Improper Control of Generation of Code ('Code Injection')](https://cwe.mitre.org/data/definitions/94.html)\n- [CWE-20: Improper Input Validation](https://cwe.mitre.org/data/definitions/20.html)"
+              },
+              "properties": {
+                "cwe": [
+                  {
+                    "id": "CWE-706",
+                    "url": "https://cwe.mitre.org/data/definitions/706.html"
+                  }
+                ],
+                "kind": "FAIL",
+                "security-severity": "5.0",
+                "tags": [
+                  "security",
+                  "CWE-706"
+                ]
+              }
+            }
+          ],
           "language": "en-US",
           "contents": [
             "localizedData",
@@ -19,21 +204,319 @@
           "isComprehensive": false
         }
       },
-      "invocations": [
+      "language": "en-US",
+      "results": [
         {
-          "toolExecutionNotifications": [
+          "ruleId": "01262f04-ac12-3e23-864f-10c8ecdd2bab",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Detected Private Key Hardcoding Vulnerability"
+          },
+          "locations": [
             {
-              "message": {
-                "text": "Scan failed: invalid or expired GLOGSERVICE token."
-              },
-              "level": "error"
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "integration_tests/conftest.py",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 1,
+                  "endLine": 33,
+                  "endColumn": 37,
+                  "snippet": {
+                    "text": "-----BEGIN RSA PRIVATE KEY-----\nMIIEogIBAAKCAQEAz0xZ5GehJobADRrKs9mI/JlIeeyYxQ8Z6Kkcahw8TANwzo16"
+                  },
+                  "sourceLanguage": "python"
+                }
+              }
             }
           ],
-          "executionSuccessful": false
+          "partialFingerprints": {
+            "glog-pfp-ruleFileLineCode/v1": "9caae171748efd36bfe2cf75f42e0776933c1593169b6f9c816ea85ccb5f37e2",
+            "glog-pfp-ruleFileCode/v1": "db13351e477ce2b65218fbc3ad040f73d92e32ea73ac2e98f352f1cd70fe6d21"
+          },
+          "fingerprints": {
+            "glog-fp-ruleFileCode/v1": "db13351e477ce2b65218fbc3ad040f73d92e32ea73ac2e98f352f1cd70fe6d21"
+          }
+        },
+        {
+          "ruleId": "c9a327d6-7e1e-3673-9419-708610ca1a1d",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Hardcoded Private Key Vulnerability Detected"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "integration_tests/conftest.py",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 124,
+                  "startColumn": 1,
+                  "endLine": 125,
+                  "endColumn": 65,
+                  "snippet": {
+                    "text": "-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEA246YxcHClfvdPdK7ncsjVdBm3hhCdRpVP3DD5F2MPf0Tmb3w"
+                  },
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "glog-pfp-ruleFileLineCode/v1": "f2f86d46ed52df22dac4225009efd622ac1a1d8f9f88c2f46a8f2fb23695ae86",
+            "glog-pfp-ruleFileCode/v1": "cc37040689ba99e5d36222e7a8b44b186ebafb16e0ffb42d3afcba13b448e621"
+          },
+          "fingerprints": {
+            "glog-fp-ruleFileCode/v1": "cc37040689ba99e5d36222e7a8b44b186ebafb16e0ffb42d3afcba13b448e621"
+          }
+        },
+        {
+          "ruleId": "86514621-ef8d-30cc-9aae-7c7098da59d3",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Potential Interface Binding Vulnerability"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "rasa_sdk/endpoint.py"
+                },
+                "region": {
+                  "startLine": 251,
+                  "startColumn": 41,
+                  "endLine": 251,
+                  "endColumn": 50,
+                  "snippet": {
+                    "text": "    host = os.environ.get(\"SANIC_HOST\", \"0.0.0.0\")\n"
+                  },
+                  "sourceLanguage": "python"
+                },
+                "contextRegion": {
+                  "startLine": 250,
+                  "endLine": 252,
+                  "snippet": {
+                    "text": "    protocol = \"https\" if ssl_context else \"http\"\n    host = os.environ.get(\"SANIC_HOST\", \"0.0.0.0\")\n\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "glog-pfp-ruleFileLineCode/v1": "9833eb105ba607255a4d5f832e6a07343ed1ec98fe128b10b5d9d1e4c324bf8c",
+            "glog-pfp-ruleFileCode/v1": "2d8a61a1e1df22bb9203d63426c5efb3261eff9c87c49c20c4f157210e94c02e"
+          },
+          "fingerprints": {
+            "glog-fp-ruleFileCode/v1": "2d8a61a1e1df22bb9203d63426c5efb3261eff9c87c49c20c4f157210e94c02e"
+          },
+          "properties": {
+            "issue_severity": "MEDIUM",
+            "issue_confidence": "MEDIUM"
+          }
+        },
+        {
+          "ruleId": "d8d9824b-2a7b-32e6-bd48-634e6638a99b",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Arbitrary Code Execution Vulnerability in `importlib.import_module()` Function Due to Untrusted User Input"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "rasa_sdk/executor.py",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 271,
+                  "startColumn": 18,
+                  "endLine": 271,
+                  "endColumn": 47,
+                  "snippet": {
+                    "text": "        module = importlib.import_module(name)"
+                  },
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "glog-pfp-ruleFileLineCode/v1": "b18b621f788240d6eae111fab414dc67d459f9c673c085544f8881ba5ee02dbe",
+            "glog-pfp-ruleFileCode/v1": "8191e07a7cc4eb618ca6c0f5152aca640ac0c910e1ccfba68fb30eff893aa012"
+          },
+          "fingerprints": {
+            "glog-fp-ruleFileCode/v1": "8191e07a7cc4eb618ca6c0f5152aca640ac0c910e1ccfba68fb30eff893aa012"
+          }
+        },
+        {
+          "ruleId": "71a01508-125d-3e3e-ae25-54f02f0f0ff3",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Shell=True Subprocess Call Security Vulnerability Detected"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "scripts/get_tags_from_branch.py"
+                },
+                "region": {
+                  "startLine": 16,
+                  "startColumn": 22,
+                  "endLine": 17,
+                  "endColumn": 14,
+                  "snippet": {
+                    "text": "            continue\n"
+                  },
+                  "sourceLanguage": "python"
+                },
+                "contextRegion": {
+                  "startLine": 17,
+                  "endLine": 23,
+                  "snippet": {
+                    "text": "                f'git tag | sort -r -V | grep -E \"^{branch_name}.[0-9]+$\"',\n                shell=True,\n                universal_newlines=True\n            )\n        except subprocess.CalledProcessError:\n            print(f'Failed to retrieve tags for `{branch_name}` branch.')\n            continue\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "glog-pfp-ruleFileLineCode/v1": "85d6fbc9d9349c447f271cfa02a8a15fbf67018aedd6249d6a72186923081d4a",
+            "glog-pfp-ruleFileCode/v1": "c839db718c79f687007774bed788b2edf2f874704e00a021258698dc105f17c6"
+          },
+          "fingerprints": {
+            "glog-fp-ruleFileCode/v1": "c839db718c79f687007774bed788b2edf2f874704e00a021258698dc105f17c6"
+          },
+          "properties": {
+            "issue_severity": "HIGH",
+            "issue_confidence": "HIGH"
+          }
+        },
+        {
+          "ruleId": "d73311e8-6c99-38c7-b30a-4d144125777e",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "'Subprocess' Function 'check_output' with 'shell=True' Vulnerability Detected, Suggest Using 'shell=False'"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "scripts/get_tags_from_branch.py",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 18,
+                  "startColumn": 23,
+                  "endLine": 18,
+                  "endColumn": 27,
+                  "snippet": {
+                    "text": "                shell=True,"
+                  },
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "glog-pfp-ruleFileLineCode/v1": "370ebedd2f3c20716eb0a996c09ac240b5a663b7c59da4044a1fb1d19505588a",
+            "glog-pfp-ruleFileCode/v1": "af0c48a3ff2604aa7a36c0c9d934894c11e759166c59b0a5d3d47a6408e1612d"
+          },
+          "fingerprints": {
+            "glog-fp-ruleFileCode/v1": "af0c48a3ff2604aa7a36c0c9d934894c11e759166c59b0a5d3d47a6408e1612d"
+          }
+        },
+        {
+          "ruleId": "7a6efe89-13c4-3394-856c-ef96e17da5a5",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Exec Usage Detected"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "scripts/release.py"
+                },
+                "region": {
+                  "startLine": 111,
+                  "startColumn": 9,
+                  "endLine": 111,
+                  "endColumn": 33,
+                  "snippet": {
+                    "text": "        exec(f.read(), _globals)\n"
+                  },
+                  "sourceLanguage": "python"
+                },
+                "contextRegion": {
+                  "startLine": 110,
+                  "endLine": 112,
+                  "snippet": {
+                    "text": "    with version_file_path().open() as f:\n        exec(f.read(), _globals)\n\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "glog-pfp-ruleFileLineCode/v1": "347b4da80457b891e13b95ad1e0922f03371727831cd4c12b41472f6706f3b4e",
+            "glog-pfp-ruleFileCode/v1": "ae5ed1de745a3cd19565d43d85a6bc99c97bf5d66de5261dd63a0c47a0ca332d"
+          },
+          "fingerprints": {
+            "glog-fp-ruleFileCode/v1": "ae5ed1de745a3cd19565d43d85a6bc99c97bf5d66de5261dd63a0c47a0ca332d"
+          },
+          "properties": {
+            "issue_severity": "MEDIUM",
+            "issue_confidence": "HIGH"
+          }
+        },
+        {
+          "ruleId": "64f4d57f-eb97-3ba9-ade5-c9dd5bc2d8ba",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Potential Code Injection Vulnerability Detected through exec() Usage"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "scripts/release.py",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 111,
+                  "startColumn": 9,
+                  "endLine": 111,
+                  "endColumn": 33,
+                  "snippet": {
+                    "text": "        exec(f.read(), _globals)"
+                  },
+                  "sourceLanguage": "python"
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "glog-pfp-ruleFileLineCode/v1": "0379ff6b687fcc1eed1f62262e3887aae7fff437fe70a43462891913c53af275",
+            "glog-pfp-ruleFileCode/v1": "df6e65d00fb223285ab6be7a5ff3e8e8e8feac83686ce14168fe773e82baa886"
+          },
+          "fingerprints": {
+            "glog-fp-ruleFileCode/v1": "df6e65d00fb223285ab6be7a5ff3e8e8e8feac83686ce14168fe773e82baa886"
+          }
         }
       ],
-      "language": "en-US",
-      "results": [],
       "newlineSequences": [
         "\r\n",
         "\n"
